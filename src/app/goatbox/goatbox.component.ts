@@ -16,7 +16,6 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
   private tldSub: Observable<TldPair>;
 
   displayedColumns = ['tld', 'domain'];
-  // dataSource: DataSource<TldPair>;
   public dataSource: MatTableDataSource<TldPair>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
