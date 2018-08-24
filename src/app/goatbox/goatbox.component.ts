@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 @Component({
   selector: 'app-goatbox',
   templateUrl: './goatbox.component.html',
-  styleUrls: ['./goatbox.component.css']
+  styleUrls: ['./goatbox.component.scss']
 })
 export class GoatboxComponent implements OnInit, AfterViewInit {
 
