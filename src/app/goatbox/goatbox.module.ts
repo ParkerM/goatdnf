@@ -1,24 +1,26 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {TldPair} from '../service/tld-grabber.service';
-import {MatTableModule} from '@angular/material';
+import {MatCardModule, MatExpansionModule, MatListModule, MatPaginatorModule, MatTableModule} from '@angular/material';
+import {GoatboxComponent} from './goatbox.component';
+import {TldGrabberService} from '../service/tld-grabber.service';
+import {CdkTableModule} from '@angular/cdk/table';
 
 @NgModule({
   imports: [
+    CdkTableModule,
     CommonModule,
-    MatTableModule
+    MatCardModule,
+    MatExpansionModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatTableModule,
   ],
-  declarations: []
+  exports: [
+    GoatboxComponent
+  ],
+  declarations: [
+    GoatboxComponent
+  ],
+  providers: [TldGrabberService],
 })
-export class GoatboxModule {
-  private tld: TldPair;
-  private response: Response;
-
-  public constructor() {
-
-  }
-
-  protected getGoat(): Response {
-    return null;
-  }
-}
+export class GoatboxModule { }
