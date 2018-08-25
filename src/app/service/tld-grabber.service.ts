@@ -8,13 +8,13 @@ import {filter, flatMap, map} from 'rxjs/operators';
 })
 export class TldGrabberService {
 
-  readonly tldDirectory = '/api/tlds';
+  static readonly tldDirectory = '/api/tlds';
 
   constructor(private http: HttpClient) {
   }
 
   getTlds(domainName: string): Observable<TldPair> {
-    return this.http.get(this.tldDirectory, {responseType: 'text'})
+    return this.http.get(TldGrabberService.tldDirectory, {responseType: 'text'})
       .pipe(
         flatMap((res: string) => res.split('\n')),
         filter((tld: string) => tld && !tld.startsWith('#')),
