@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {GoatboxModule} from './goatbox.module';
 import {TldGrabberService, TldPair} from '../service/tld-grabber.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 import {Observable} from 'rxjs';
@@ -16,7 +15,7 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
   private tldSub: Observable<TldPair>;
 
   displayedColumns = ['tld', 'domain'];
-  public dataSource: MatTableDataSource<TldPair>;
+  dataSource: MatTableDataSource<TldPair>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
