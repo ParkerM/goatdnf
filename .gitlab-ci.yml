@@ -1,14 +1,44 @@
 image: node:10
 
+stages:
+- build
+- test
+- deploy
+
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
   - node_modules/
 
-stages:
-- test
+before_script:
+  - yarn install
+
+build:
+  stage: build
+  script:
+    - yarn build --prod
+  artifacts:
+    paths:
+      - app.yaml
+      - dist/
 
 jest_test:
   stage: test
   script:
-  - yarn install
   - yarn test:ci
+
+deploy_gcp:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  before_script:
+    - ''
+  dependencies:
+    - build
+  script:
+    - echo $GCP_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+    - gcloud config set project $GCP_PROJECT_ID
+    - mkdir www && mv -t www app.yaml dist
+    - gsutil cp -R www gs://goatdnf
+    - gsutil ls gs://goatdnf/www
+    - gcloud app deploy
