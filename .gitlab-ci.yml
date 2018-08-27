@@ -38,7 +38,7 @@ deploy_gcp:
     - echo $GCP_SERVICE_KEY > ${HOME}/gcloud-service-key.json
     - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
     - gcloud config set project $GCP_PROJECT_ID
-    - mkdir www && mv -t www app.yaml dist
+    - mkdir www && mv -t www dist
     - gsutil cp -R www gs://goatdnf
     - gsutil ls gs://goatdnf/www
     - gcloud app deploy
