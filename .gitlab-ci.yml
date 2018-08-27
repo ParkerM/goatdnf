@@ -38,6 +38,6 @@ deploy_gcp:
     - echo $GCP_SERVICE_KEY > ${HOME}/gcloud-service-key.json
     - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
     - gcloud config set project ${GCP_PROJECT_ID}
-    - mkdir www && mv -t www dist
-    - gsutil rsync -d -r www gs://${GCP_APP_URL}
+    - mkdir www && mv dist/* www
+    - gsutil rsync -d -av www gs://${GCP_APP_URL}
     - gsutil ls gs://${GCP_APP_URL}/www
