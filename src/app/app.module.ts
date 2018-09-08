@@ -6,6 +6,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {GoatboxModule} from './goatbox/goatbox.module';
+import {MatToolbarModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -14,6 +15,7 @@ import {GoatboxModule} from './goatbox/goatbox.module';
     BrowserModule,
     GoatboxModule,
     HttpClientModule,
+    MatToolbarModule,
   ],
   declarations: [
     AppComponent,
