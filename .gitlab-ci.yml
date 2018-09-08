@@ -5,22 +5,25 @@ stages:
 - build
 - deploy
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - node_modules/
-
-before_script:
-- yarn install
-
 jest_test:
   stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
   script:
+  - yarn install
   - yarn test:ci
 
 build:
   stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+    policy: pull
   script:
+  - yarn install
   - yarn build --prod
   artifacts:
     paths:
@@ -31,8 +34,6 @@ build:
 deploy_gcp:
   stage: deploy
   image: google/cloud-sdk:latest
-  before_script:
-  - ''
   dependencies:
   - build
   script:
@@ -45,14 +46,13 @@ deploy_gcp:
 
 deploy_pws:
   stage: deploy
-  before_script:
-  - ''
   dependencies:
   - build
   script:
   - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
   - ./cf api api.run.pivotal.io
   - ./cf auth
+  - ./cf target -o $CF_ORG -s $CF_SPACE
   - ./cf push
   only:
   - master
