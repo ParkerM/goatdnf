@@ -1,8 +1,8 @@
 image: node:10
 
 stages:
-- build
 - test
+- build
 - deploy
 
 cache:
@@ -13,6 +13,11 @@ cache:
 before_script:
 - yarn install
 
+jest_test:
+  stage: test
+  script:
+  - yarn test:ci
+
 build:
   stage: build
   script:
@@ -22,11 +27,6 @@ build:
     - app.yaml
     - manifest.yml
     - dist/
-
-jest_test:
-  stage: test
-  script:
-  - yarn test:ci
 
 deploy_gcp:
   stage: deploy
@@ -51,7 +51,8 @@ deploy_pws:
   - build
   script:
   - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
-  - ./cf login -u $CF_USERNAME -p $CF_SERVICE_KEY -a api.run.pivotal.io
+  - ./cf api api.run.pivotal.io
+  - ./cf auth
   - ./cf push
   only:
   - master
