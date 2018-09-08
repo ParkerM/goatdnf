@@ -11,16 +11,17 @@ cache:
   - node_modules/
 
 before_script:
-  - yarn install
+- yarn install
 
 build:
   stage: build
   script:
-    - yarn build --prod
+  - yarn build --prod
   artifacts:
     paths:
-      - app.yaml
-      - dist/
+    - app.yaml
+    - manifest.yml
+    - dist/
 
 jest_test:
   stage: test
@@ -31,13 +32,26 @@ deploy_gcp:
   stage: deploy
   image: google/cloud-sdk:latest
   before_script:
-    - ''
+  - ''
   dependencies:
-    - build
+  - build
   script:
-    - echo $GCP_SERVICE_KEY > ${HOME}/gcloud-service-key.json
-    - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
-    - gcloud config set project ${GCP_PROJECT_ID}
-    - mkdir www && mv dist/* www
-    - gsutil rsync -d -r www gs://${GCP_APP_URL}
-    - gsutil ls gs://${GCP_APP_URL}
+  - echo $GCP_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+  - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+  - gcloud config set project ${GCP_PROJECT_ID}
+  - mkdir www && mv dist/* www
+  - gsutil rsync -d -r www gs://${GCP_APP_URL}
+  - gsutil ls gs://${GCP_APP_URL}
+
+deploy_pws:
+  stage: deploy
+  before_script:
+  - ''
+  dependencies:
+  - build
+  script:
+  - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
+  - ./cf login -u $CF_USERNAME -p $CF_SERVICE_KEY -a api.run.pivotal.io
+  - ./cf push
+  only:
+  - master

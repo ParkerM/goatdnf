@@ -1,0 +1,7 @@
+applications:
+- name: goat-dnf
+  path: dist
+  memory: 32M
+  instances: 2
+  buildpack: https://github.com/cloudfoundry/staticfile-buildpack
+  random-route: true
