@@ -49,6 +49,7 @@ deploy_pws:
   dependencies:
   - build
   script:
+  - mv manifest.yml dist/manifest.yml && cd dist
   - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
   - ./cf api api.run.pivotal.io
   - ./cf auth

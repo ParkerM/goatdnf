@@ -1,7 +1,7 @@
 applications:
 - name: goat-dnf
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
-  command: node dist/server.js
+  command: node server.js
   memory: 32M
   instances: 1
   random-route: true
