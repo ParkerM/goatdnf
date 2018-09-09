@@ -8,7 +8,7 @@ import {filter, flatMap, map} from 'rxjs/operators';
 })
 export class TldGrabberService {
 
-  static readonly tldDirectory = '/api/tlds';
+  static readonly tldDirectory = '/api/ext/iana/tlds';
 
   constructor(private http: HttpClient) {
   }

@@ -1,9 +1,9 @@
 {
-  "/api/tlds": {
+  "/api/ext/iana/tlds": {
     "target": "http://data.iana.org/TLD",
     "secure": false,
     "pathRewrite": {
-      "^/api/tlds": "/tlds-alpha-by-domain.txt"
+      "^/api/ext/iana/tlds": "/tlds-alpha-by-domain.txt"
     },
     "changeOrigin": true
   }
