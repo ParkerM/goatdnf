@@ -1,7 +1,10 @@
 {
   "name": "goat-dnf",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "GPL-3.0",
+  "author": "Parker Mauney <parkermauney@gmail.com> (parkerm.gitlab.io)",
+  "homepage": "https://gitlab.com/ParkerM/goatdnf",
+  "repository": "gitlab:ParkerM/goatdnf",
   "jest": {
     "preset": "jest-preset-angular",
     "setupTestFrameworkScriptFile": "<rootDir>/src/setupJest.ts"

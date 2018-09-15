@@ -22,6 +22,7 @@ vulerability_scan:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
     - node_modules/
+    policy: pull
   script:
   - yarn install
   - yarn test:vulnerabilities
