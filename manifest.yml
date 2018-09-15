@@ -1,6 +1,8 @@
+---
 applications:
 - name: goat-dnf
-  buildpack: https://github.com/cloudfoundry/nodejs-buildpack
+  buildpacks:
+  - https://github.com/cloudfoundry/nodejs-buildpack
   command: node server.js
   memory: 32M
   instances: 1
