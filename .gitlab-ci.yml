@@ -74,6 +74,8 @@ deploy_pws:
   - ./cf auth
   - ./cf target -o $CF_ORG -s $CF_SPACE
   - ./cf push
+  environment:
+    name: PWS_PROD
   only:
   - master
 
