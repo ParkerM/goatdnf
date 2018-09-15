@@ -13,7 +13,19 @@ jest_test:
     - node_modules/
   script:
   - yarn install
-  - yarn test:ci
+  - yarn test:ci --coverage
+  coverage: '/All files\s*\|(?:\s*[\d\.]*\s*\|){3}\s*([\d\.]+)/'
+
+vulerability_scan:
+  stage: test
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+    - node_modules/
+  script:
+  - yarn install
+  - yarn test:vulnerabilities
+  allow_failure: true
 
 build:
   stage: build
