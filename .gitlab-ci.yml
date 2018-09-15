@@ -15,6 +15,9 @@ jest_test:
   - yarn install
   - yarn test:ci --coverage
   coverage: '/All files\s*\|(?:\s*[\d\.]*\s*\|){3}\s*([\d\.]+)/'
+  artifacts:
+    paths:
+    - coverage/lcov-report/
 
 vulerability_scan:
   stage: test
@@ -37,8 +40,8 @@ build:
     policy: pull
   script:
   - yarn install
-  - yarn build --aot --prod && cd dist
-  - yarn install
+  - yarn build:prod
+  - cd dist && yarn install
   artifacts:
     paths:
     - app.yaml
@@ -73,3 +76,18 @@ deploy_pws:
   - ./cf push
   only:
   - master
+
+# Use GitLab pages to host coverage report
+pages:
+  stage: deploy
+  dependencies:
+  - jest_test
+  script:
+  - mkdir -p public/coverage
+  - mv coverage/lcov-report/* public/coverage
+  artifacts:
+    paths:
+    - public
+  only:
+  - master
+  allow_failure: true
