@@ -36,14 +36,17 @@ build:
     policy: pull
   script:
   - yarn install
-  - yarn build --aot --prod
+  - yarn build --aot --prod && cd dist
+  - yarn install
   artifacts:
     paths:
     - app.yaml
     - manifest.yml
     - dist/
+    when: on_success
 
-deploy_gcp:
+# Temporarily disabled until nodejs settings are configured
+.deploy_gcp:
   stage: deploy
   image: google/cloud-sdk:latest
   dependencies:
@@ -61,7 +64,7 @@ deploy_pws:
   dependencies:
   - build
   script:
-  - mv manifest.yml dist/manifest.yml && cd dist
+  - mv manifest.yml -t dist/ && cd dist
   - curl --location "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github" | tar zx
   - ./cf api api.run.pivotal.io
   - ./cf auth
