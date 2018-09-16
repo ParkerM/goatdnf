@@ -25,9 +25,9 @@ describe('TldGrabberService', () => {
 
   it('maps list of TLDs to TldPair domain objects', async(() => {
     const expectedTlds = [
-      {domainName: 'hi', tld: 'com', domain: 'hi.com'},
-      {domainName: 'hi', tld: 'biz', domain: 'hi.biz'},
-      {domainName: 'hi', tld: 'good', domain: 'hi.good'},
+      {domainName: 'hi', tld: 'com'},
+      {domainName: 'hi', tld: 'biz'},
+      {domainName: 'hi', tld: 'good'},
     ];
 
     service.getTlds('hi')
@@ -41,4 +41,30 @@ describe('TldGrabberService', () => {
     expect(req.request.method).toBe('GET');
     req.flush('COM\nBIZ\n#BAD\nGOOD');
   }));
+
+  it('returns concatenated domain name with getter', () => {
+    expect(new TldPair('com', 'hi').domain).toEqual('hi.com');
+    expect(new TldPair('abdfsklas', 'oof').domain).toEqual('oof.abdfsklas');
+  });
+});
+
+describe('TldPair', () => {
+  it('creates a TldPair from a simple qualified domain string', () => {
+    const pairHello: TldPair = TldPair.fromDomain('hello.com');
+    expect(pairHello.domainName).toEqual('hello');
+    expect(pairHello.tld).toEqual('com');
+    expect(pairHello.domain).toEqual('hello.com');
+
+    const pairGoodbye: TldPair = TldPair.fromDomain('goodbye.bizness');
+    expect(pairGoodbye.domainName).toEqual('goodbye');
+    expect(pairGoodbye.tld).toEqual('bizness');
+    expect(pairGoodbye.domain).toEqual('goodbye.bizness');
+
+    expect(() => TldPair.fromDomain('evil')).toThrow(Error);
+
+    const terriblePairable = TldPair.fromDomain('very#$&*(#$<>/[]{}.#$&*(#$<>/[]{}evil');
+    expect(terriblePairable.domainName).toEqual('very%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7D');
+    expect(terriblePairable.tld).toEqual('%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7Devil');
+    expect(terriblePairable.domain).toEqual('very%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7D.%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7Devil');
+  });
 });

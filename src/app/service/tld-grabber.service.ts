@@ -25,9 +25,21 @@ export class TldGrabberService {
 
 export class TldPair {
 
-  readonly domain: string;
+  static fromDomain(domain: string): TldPair {
+    const parts = domain.split('.');
+    if (parts.length < 2) {
+      throw new Error(`Required format: example.com. Only found ${parts.length} parts.`);
+    }
+    const tld = encodeURIComponent(parts[parts.length - 1]);
+    const domainName = encodeURIComponent(parts[parts.length - 2]);
 
-  constructor(readonly tld: string, private domainName: string) {
-    this.domain = `${domainName}.${tld}`;
+    return new TldPair(tld, domainName);
+  }
+
+  constructor(readonly tld: string, readonly domainName: string) {
+  }
+
+  get domain() {
+    return `${this.domainName}.${this.tld}`;
   }
 }
