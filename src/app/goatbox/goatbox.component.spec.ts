@@ -7,58 +7,87 @@ import {TldGrabberService, TldPair} from '../service/tld-grabber.service';
 import {Subject} from 'rxjs';
 
 describe('GoatboxComponent', () => {
-  let component: GoatboxComponent;
-  let fixture: ComponentFixture<GoatboxComponent>;
+  describe('simply', () => {
+    it('should get and set the stored domain name', () => {
+      const comp = new GoatboxComponent({getTlds: jest.fn()} as TldGrabberService);
 
-  const mockTldSubject = new Subject<TldPair>();
-  const mockTldService = {
-    getTlds: jest.fn(() => mockTldSubject)
-  };
+      comp.domainName = 'original bonker';
+      expect(comp.domainName).toEqual('original bonker');
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        HttpClientTestingModule,
-        MatCardModule,
-        MatPaginatorModule,
-        MatTableModule,
-      ],
-      declarations: [GoatboxComponent],
-      providers: [{provide: TldGrabberService, useValue: mockTldService}]
-    }).compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(GoatboxComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      comp.domainName = 'Doink_Prime';
+      expect(comp.domainName).toEqual('Doink_Prime');
+    });
   });
 
-  afterEach(() => mockTldSubject.complete());
+  describe('integrated', () => {
+    let component: GoatboxComponent;
+    let fixture: ComponentFixture<GoatboxComponent>;
 
-  it('should display list of domains according to page size', () => {
-    component.paginator.pageSize = 5;
-    const tldResponses = [
-      new TldPair('tld1', 'domain'),
-      new TldPair('tld2', 'domain'),
-      new TldPair('tld3', 'domain'),
-      new TldPair('tld4', 'domain'),
-      new TldPair('tld5', 'domain'),
-      new TldPair('tld6', 'domain'),
-    ];
+    let mockTldSubject: Subject<TldPair>;
+    const mockTldService = {
+      getTlds: jest.fn(() => mockTldSubject)
+    };
 
-    tldResponses.forEach(tldPair => mockTldSubject.next(tldPair));
-    mockTldSubject.complete();
+    beforeEach(async(() => {
+      mockTldSubject = new Subject<TldPair>();
+      TestBed.configureTestingModule({
+        imports: [
+          NoopAnimationsModule,
+          HttpClientTestingModule,
+          MatCardModule,
+          MatPaginatorModule,
+          MatTableModule,
+        ],
+        declarations: [GoatboxComponent],
+        providers: [{provide: TldGrabberService, useValue: mockTldService}]
+      }).compileComponents().then(() => {
+        fixture = TestBed.createComponent(GoatboxComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+      });
+    }));
 
-    fixture.detectChanges();
+    afterEach(() => mockTldSubject.complete());
 
-    const el = fixture.nativeElement;
-    expect(el.textContent).toContain(tldResponses[0].domain);
-    expect(el.textContent).toContain(tldResponses[1].domain);
-    expect(el.textContent).toContain(tldResponses[2].domain);
-    expect(el.textContent).toContain(tldResponses[3].domain);
-    expect(el.textContent).toContain(tldResponses[4].domain);
-    expect(el.textContent).not.toContain(tldResponses[5].domain);
+    it('should display list of domains according to page size', () => {
+      component.paginator.pageSize = 5;
+      const tldResponses = [
+        new TldPair('tld1', 'domain'),
+        new TldPair('tld2', 'domain'),
+        new TldPair('tld3', 'domain'),
+        new TldPair('tld4', 'domain'),
+        new TldPair('tld5', 'domain'),
+        new TldPair('tld6', 'domain'),
+      ];
+
+      tldResponses.forEach(tldPair => mockTldSubject.next(tldPair));
+      mockTldSubject.complete();
+
+      fixture.detectChanges();
+
+      const el = fixture.nativeElement;
+      expect(el.textContent).toContain(tldResponses[0].domain);
+      expect(el.textContent).toContain(tldResponses[1].domain);
+      expect(el.textContent).toContain(tldResponses[2].domain);
+      expect(el.textContent).toContain(tldResponses[3].domain);
+      expect(el.textContent).toContain(tldResponses[4].domain);
+      expect(el.textContent).not.toContain(tldResponses[5].domain);
+    });
+
+    xit('should update the display according to input domain', () => {
+      const el = fixture.nativeElement;
+
+      component.domainName = 'hello';
+      mockTldSubject.next(new TldPair('com', 'hello'));
+      fixture.detectChanges();
+
+      expect(el.textContent).toContain('hello.com');
+
+      component.domainName = 'goodbye';
+      mockTldSubject.next(new TldPair('com', 'goodbye'));
+      fixture.detectChanges();
+
+      expect(el.textContent).toContain('goodbye.com');
+    });
   });
 });

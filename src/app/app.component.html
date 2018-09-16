@@ -9,11 +9,22 @@
   </mat-toolbar>
   <div class="container">
 
-    <div style="text-align:center">
-      <h1>
-        Welcome to {{ title }}!
-      </h1>
+    <div class="home-center">
+      <mat-card>
+        <mat-card-content>
+          <h1 class="goat-header">
+            {{ title }}
+          </h1>
+        </mat-card-content>
+      </mat-card>
     </div>
-    <app-goatbox></app-goatbox>
+    <div class="home-center tld-home">
+      <div class="goat-col goat-form">
+        <app-goatform #gf></app-goatform>
+      </div>
+      <div class="goat-col">
+        <app-goatbox #gb></app-goatbox>
+      </div>
+    </div>
   </div>
 </div>

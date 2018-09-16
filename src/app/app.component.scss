@@ -26,6 +26,26 @@ mat-toolbar {
   overflow-y: auto;
 }
 
+.home-center {
+  text-align: center;
+}
+
+.tld-home {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  padding-top: 2em;
+}
+
+.goat-col {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+h1.goat-header {
+  font-weight: lighter;
+}
+
 //.container {
 //  display: flex;
 //  justify-content: center;
