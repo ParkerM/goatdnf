@@ -1,8 +1,9 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {
-  MatCardModule,
-  MatExpansionModule,
+  MatButtonModule,
+  MatCardModule, MatCommonModule,
+  MatExpansionModule, MatFormFieldModule, MatIconModule,
   MatInputModule,
   MatListModule,
   MatPaginatorModule,
@@ -10,24 +11,34 @@ import {
   MatTableModule
 } from '@angular/material';
 import {GoatboxComponent} from './goatbox.component';
+import {GoatformComponent} from './goatform/goatform.component';
 import {TldGrabberService} from '../service/tld-grabber.service';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
+    MatButtonModule,
     MatCardModule,
+    MatCommonModule,
     MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatListModule,
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
+    ReactiveFormsModule,
   ],
   exports: [
-    GoatboxComponent
+    GoatboxComponent,
+    GoatformComponent
   ],
   declarations: [
-    GoatboxComponent
+    GoatboxComponent,
+    GoatformComponent
   ],
   providers: [TldGrabberService],
 })
