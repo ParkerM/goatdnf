@@ -1,6 +1,10 @@
 {
   "name": "goat-dnf",
   "version": "0.0.0",
+  "license": "GPL-3.0",
+  "author": "Parker Mauney <parkermauney@gmail.com> (parkerm.gitlab.io)",
+  "homepage": "https://gitlab.com/ParkerM/goatdnf",
+  "repository": "gitlab:ParkerM/goatdnf",
   "dependencies": {
     "express": "^4.16.3",
     "http-proxy-middleware": "^0.19.0",
