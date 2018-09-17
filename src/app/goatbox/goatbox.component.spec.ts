@@ -3,7 +3,7 @@ import {GoatboxComponent} from './goatbox.component';
 import {MatCardModule, MatPaginatorModule, MatTableModule} from '@angular/material';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {TldGrabberService, TldPair} from '../service/tld-grabber.service';
+import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
 import {Subject} from 'rxjs';
 
 describe('GoatboxComponent', () => {

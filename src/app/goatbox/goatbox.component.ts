@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {TldGrabberService, TldPair} from '../service/tld-grabber.service';
+import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 import {Observable} from 'rxjs';
 
