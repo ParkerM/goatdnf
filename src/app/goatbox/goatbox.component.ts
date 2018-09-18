@@ -50,11 +50,4 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
         }
       );
   }
-
-  // getAllGoats(): void {
-  //   Observable.create(pipe(
-  //     merge(this.paginator.page),
-  //     starts
-  //   ));
-  // }
 }
