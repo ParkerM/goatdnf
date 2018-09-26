@@ -18,6 +18,8 @@ jest_test:
   artifacts:
     paths:
     - coverage/lcov-report/
+  only:
+  - master
 
 vulerability_scan:
   stage: test
@@ -29,6 +31,8 @@ vulerability_scan:
   script:
   - yarn install
   - yarn test:vulnerabilities
+  only:
+  - master
   allow_failure: true
 
 build:
@@ -48,6 +52,8 @@ build:
     - manifest.yml
     - dist/
     when: on_success
+  only:
+  - master
 
 # Temporarily disabled until nodejs settings are configured
 .deploy_gcp:
@@ -62,6 +68,8 @@ build:
   - mkdir www && mv dist/* www
   - gsutil rsync -d -r www gs://${GCP_APP_URL}
   - gsutil ls gs://${GCP_APP_URL}
+  only:
+  - master
 
 deploy_pws:
   stage: deploy
