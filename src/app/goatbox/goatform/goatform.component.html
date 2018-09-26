@@ -1,13 +1,17 @@
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="goatForm" (submit)="submitSearch(domainInput.value)">
+    <form [formGroup]="goatForm" (submit)="goatForm.valid ? onSubmit(domainInput.value) : null;">
       <mat-form-field color="warn" appearance="standard" >
         <mat-label>Domain</mat-label>
         <input #domainInput
                formControlName="domainInput"
                matInput
                placeholder="Domain">
-        <button matSuffix mat-icon-button aria-label="Search" [disabled]="!goatForm.valid">
+        <button matSuffix
+                mat-icon-button
+                aria-label="Search"
+                type="submit"
+                [disabled]="!goatForm.valid">
           <mat-icon>public</mat-icon>
         </button>
         <mat-hint>{{domainInput.value}}.com</mat-hint>

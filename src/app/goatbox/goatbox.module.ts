@@ -17,6 +17,7 @@ import {GoatboxComponent} from './goatbox.component';
 import {GoatformComponent} from './goatform/goatform.component';
 import {TldGrabberService} from './shared/tld-grabber.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {GoatfinderService} from './shared/goatfinder.service';
 
 @NgModule({
   imports: [
@@ -37,12 +38,15 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
   ],
   exports: [
     GoatboxComponent,
-    GoatformComponent
+    GoatformComponent,
   ],
   declarations: [
     GoatboxComponent,
-    GoatformComponent
+    GoatformComponent,
   ],
-  providers: [TldGrabberService],
+  providers: [
+    GoatfinderService,
+    TldGrabberService,
+  ],
 })
 export class GoatboxModule { }

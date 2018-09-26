@@ -20,7 +20,7 @@
     </div>
     <div class="home-center tld-home">
       <div class="goat-col goat-form">
-        <app-goatform #gf></app-goatform>
+        <app-goatform #gf (searchEvent)="searchButtonClicked($event)"></app-goatform>
       </div>
       <div class="goat-col">
         <app-goatbox #gb></app-goatbox>

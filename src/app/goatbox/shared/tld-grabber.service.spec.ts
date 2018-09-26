@@ -1,5 +1,4 @@
 import {async, getTestBed, TestBed} from '@angular/core/testing';
-
 import {TldGrabberService, TldPair} from './tld-grabber.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {toArray} from 'rxjs/operators';
