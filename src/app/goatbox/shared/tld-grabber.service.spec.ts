@@ -23,15 +23,11 @@ describe('TldGrabberService', () => {
   });
 
   it('maps list of TLDs to TldPair domain objects', async(() => {
-    const expectedTlds = [
-      {domainName: 'hi', tld: 'com'},
-      {domainName: 'hi', tld: 'biz'},
-      {domainName: 'hi', tld: 'good'},
-    ];
+    const expectedTlds = ['com', 'biz', 'good'];
 
-    service.getTlds('hi')
+    service.getTlds()
       .pipe(toArray())
-      .subscribe((tlds: TldPair[]) => {
+      .subscribe((tlds: string[]) => {
         expect(tlds.length).toBe(3);
         expect(tlds).toEqual(expectedTlds);
       });
@@ -40,14 +36,14 @@ describe('TldGrabberService', () => {
     expect(req.request.method).toBe('GET');
     req.flush('COM\nBIZ\n#BAD\nGOOD');
   }));
+});
 
+describe('TldPair', () => {
   it('returns concatenated domain name with getter', () => {
     expect(new TldPair('com', 'hi').domain).toEqual('hi.com');
     expect(new TldPair('abdfsklas', 'oof').domain).toEqual('oof.abdfsklas');
   });
-});
 
-describe('TldPair', () => {
   it('creates a TldPair from a simple qualified domain string', () => {
     const pairHello: TldPair = TldPair.fromDomain('hello.com');
     expect(pairHello.domainName).toEqual('hello');

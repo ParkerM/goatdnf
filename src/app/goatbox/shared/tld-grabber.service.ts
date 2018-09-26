@@ -13,12 +13,12 @@ export class TldGrabberService {
   constructor(private http: HttpClient) {
   }
 
-  getTlds(domainName: string): Observable<TldPair> {
+  getTlds(): Observable<string> {
     return this.http.get(TldGrabberService.tldDirectory, {responseType: 'text'})
       .pipe(
         flatMap((res: string) => res.split('\n')),
         filter((tld: string) => tld && !tld.startsWith('#')),
-        map((tld: string) => new TldPair(tld.toLowerCase(), domainName))
+        map((tld: string) => tld.toLowerCase()),
       );
   }
 }
