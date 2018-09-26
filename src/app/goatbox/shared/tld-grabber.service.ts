@@ -23,6 +23,24 @@ export class TldGrabberService {
   }
 }
 
+export class TldDomainExpert {
+  tlds: string[];
+  domain: string;
+
+  constructor(tlds: string[], domain?: string) {
+    this.tlds = tlds;
+    this.domain = domain ? domain.toLowerCase() : null;
+  }
+
+  get tldPairs(): TldPair[] {
+    return this.tlds.map(tld => new TldPair(tld.toLowerCase(), this.domain));
+  }
+
+  updateDomain(domain: string) {
+    this.domain = domain.toLowerCase();
+  }
+}
+
 export class TldPair {
 
   static fromDomain(domain: string): TldPair {

@@ -1,5 +1,5 @@
 import {async, getTestBed, TestBed} from '@angular/core/testing';
-import {TldGrabberService, TldPair} from './tld-grabber.service';
+import {TldDomainExpert, TldGrabberService, TldPair} from './tld-grabber.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {toArray} from 'rxjs/operators';
 
@@ -25,6 +25,7 @@ describe('TldGrabberService', () => {
   it('maps list of TLDs to TldPair domain objects', async(() => {
     const expectedTlds = ['com', 'biz', 'good'];
 
+    expect.assertions(3);
     service.getTlds()
       .pipe(toArray())
       .subscribe((tlds: string[]) => {
@@ -61,5 +62,52 @@ describe('TldPair', () => {
     expect(terriblePairable.domainName).toEqual('very%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7D');
     expect(terriblePairable.tld).toEqual('%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7Devil');
     expect(terriblePairable.domain).toEqual('very%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7D.%23%24%26*(%23%24%3C%3E%2F%5B%5D%7B%7Devil');
+  });
+});
+
+describe('TldDomainExpert', () => {
+  it('initializes TLD array', () => {
+    const tldThing = new TldDomainExpert(['com', 'biz', 'co.uk']);
+
+    expect(tldThing.tldPairs).toEqual([
+      new TldPair('com', null),
+      new TldPair('biz', null),
+      new TldPair('co.uk', null),
+    ]);
+  });
+
+  it('initializes TLD array with optional domain arg', () => {
+    const tldThing = new TldDomainExpert(['com', 'biz', 'co.uk'], 'poise');
+
+    expect(tldThing.tldPairs).toEqual([
+      new TldPair('com', 'poise'),
+      new TldPair('biz', 'poise'),
+      new TldPair('co.uk', 'poise'),
+    ]);
+  });
+
+  it('returns lowercased pairs', () => {
+    const tldThing = new TldDomainExpert(['com', 'BIZ', 'cO.UkFoRAGEr'], 'pOiSe');
+
+    expect(tldThing.tldPairs).toEqual([
+      new TldPair('com', 'poise'),
+      new TldPair('biz', 'poise'),
+      new TldPair('co.ukforager', 'poise'),
+    ]);
+  });
+
+  it('updates domain to given value lowercased', () => {
+    const tldThing = new TldDomainExpert(['com', 'biz'], 'oldies');
+
+    expect(tldThing.tldPairs).toEqual([
+      new TldPair('com', 'oldies'),
+      new TldPair('biz', 'oldies'),
+    ]);
+
+    tldThing.updateDomain('nUwave');
+    expect(tldThing.tldPairs).toEqual([
+      new TldPair('com', 'nuwave'),
+      new TldPair('biz', 'nuwave'),
+    ]);
   });
 });
