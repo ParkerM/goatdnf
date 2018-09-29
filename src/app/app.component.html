@@ -23,7 +23,7 @@
         <app-goatform #gf (searchEvent)="searchButtonClicked($event)"></app-goatform>
       </div>
       <div class="goat-col">
-        <app-goatbox #gb></app-goatbox>
+        <app-goatbox #gb [domainUpdated]="searchEvent"></app-goatbox>
       </div>
     </div>
   </div>

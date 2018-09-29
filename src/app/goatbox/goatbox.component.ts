@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {GoatfinderService} from './shared/goatfinder.service';
 
 @Component({
@@ -11,23 +11,25 @@ import {GoatfinderService} from './shared/goatfinder.service';
 })
 export class GoatboxComponent implements OnInit, AfterViewInit {
 
-  readonly DOMAIN_NAME = 'example'; // TODO: fix me
+  readonly DEFAULT_DOMAIN_NAME = 'example'; // TODO: fix me
   private tlds: TldPair[] = [];
   private tldSub: Observable<TldPair>;
   private _domainName: string;
 
   displayedColumns = ['tld', 'domain'];
   dataSource: MatTableDataSource<TldPair>;
+  dataSubject = new BehaviorSubject<any[]>([]);
 
   domainData: any[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @Input() domainUpdated: Event;
+  domainUpdated: Subject<string>;
 
   @Input()
   set domainName(name: string) {
     this._domainName = name;
+    this.dataSubject.next()
   }
   get domainName() {
     return this._domainName;
@@ -35,7 +37,9 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
 
   constructor(private goatFinderService: GoatfinderService,
               private service: TldGrabberService) {
-    this.tldSub = this.service.getTlds(this.DOMAIN_NAME);
+    this.domainUpdated = new Subject<string>();
+    this.tldSub = this.service.getTlds();
+    this.dataSource = new MatTableDataSource<TldPair>(this.tlds);
   }
 
   ngOnInit(): void {
@@ -46,15 +50,19 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
    * be able to query its view for the initialized paginator.
    */
   ngAfterViewInit() {
-    this.tldSub.subscribe(tldPair => this.tlds.push(tldPair),
+    this.tldSub.subscribe(tld => this.tlds.push(tld),
       () => {
 
       },
       () => {
-        this.dataSource = new MatTableDataSource<TldPair>(this.tlds);
         this.dataSource.paginator = this.paginator;
       }
     );
+
+    this.domainUpdated.subscribe((domain: string) => {
+      this.tlds = this.tlds.map((tld: TldPair) => new TldPair(tld.tld, domain));
+      this.dataSource.data = this.tlds;
+    });
     this.goatFinderService.getWebInfo(['google.com', 'gatech.edu', 'nws.gov', 'junk.blargh'])
       .subscribe(foo => this.domainData.push(foo));
   }

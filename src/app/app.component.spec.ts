@@ -3,8 +3,10 @@ import {AppComponent} from './app.component';
 import {GoatboxComponent} from './goatbox/goatbox.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {GoatformComponent} from './goatbox/goatform/goatform.component';
-import {By} from '@angular/platform-browser';
-import {FormBuilder} from '@angular/forms';
+import {BrowserModule, By} from '@angular/platform-browser';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatCardModule, MatTableModule} from '@angular/material';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('AppComponent', () => {
   describe('simply', () => {
@@ -34,26 +36,34 @@ describe('AppComponent', () => {
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
+        imports: [
+          BrowserModule,
+          FormsModule,
+          HttpClientTestingModule,
+          MatCardModule,
+          MatTableModule,
+          ReactiveFormsModule,
+        ],
         declarations: [
           AppComponent,
-          GoatformComponent
+          GoatboxComponent,
+          GoatformComponent,
         ],
         providers: [FormBuilder],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
-      }).compileComponents().then(() => {
+      }).compileComponents()
+        .then(() => {
         fixture = TestBed.createComponent(AppComponent);
         component = fixture.debugElement.componentInstance;
         fixture.detectChanges();
-      });
+      }).catch(err => fail(err));
     }));
 
-    xit('should propagate value changes from GoatForm to GoatBox', () => {
-
-
+    it('should propagate value changes from GoatForm to GoatBox', () => {
       component.appForm.get('goatForm').get('domainInput').setValue('baaaa');
       fixture.detectChanges();
 
-
+      expect(component.appForm.get('')).toEqual('');
     });
   });
 });

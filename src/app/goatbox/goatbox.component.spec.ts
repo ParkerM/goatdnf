@@ -5,11 +5,19 @@ import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
 import {Subject} from 'rxjs';
+import {GoatfinderService} from './shared/goatfinder.service';
 
 describe('GoatboxComponent', () => {
-  describe('simply', () => {
-    it('should get and set the stored domain name', () => {
-      const comp = new GoatboxComponent({getTlds: jest.fn()} as TldGrabberService);
+  describe('should simply', () => {
+    it('get and set the stored domain name', () => {
+      const goatService: GoatfinderService = {
+        getWebInfo: jest.fn(),
+      } as GoatfinderService;
+      const tldService: TldGrabberService = {
+        getTlds: jest.fn(),
+      } as TldGrabberService;
+
+      const comp = new GoatboxComponent(goatService, tldService);
 
       comp.domainName = 'original bonker';
       expect(comp.domainName).toEqual('original bonker');
@@ -19,7 +27,7 @@ describe('GoatboxComponent', () => {
     });
   });
 
-  describe('integrated', () => {
+  describe('when integrated', () => {
     let component: GoatboxComponent;
     let fixture: ComponentFixture<GoatboxComponent>;
 
@@ -74,20 +82,21 @@ describe('GoatboxComponent', () => {
       expect(el.textContent).not.toContain(tldResponses[5].domain);
     });
 
-    xit('should update the display according to input domain', () => {
+    it('should update the display according to input domain', async(() => {
       const el = fixture.nativeElement;
 
-      component.domainName = 'hello';
+      component.domainUpdated.next('hello');
       mockTldSubject.next(new TldPair('com', 'hello'));
+      mockTldSubject.complete();
       fixture.detectChanges();
 
-      expect(el.textContent).toContain('hello.com');
+      expect(el.innerHTML).toContain('hello.com');
 
-      component.domainName = 'goodbye';
+      component.domainUpdated.next('goodbye');
       mockTldSubject.next(new TldPair('com', 'goodbye'));
       fixture.detectChanges();
 
       expect(el.textContent).toContain('goodbye.com');
-    });
+    }));
   });
 });

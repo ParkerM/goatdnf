@@ -12,6 +12,8 @@ export class AppComponent implements OnInit {
   title = 'Goat Domain Name Finder';
   appForm: FormGroup;
 
+  public searchEvent: Event;
+
   @ViewChild('gf') gf: GoatformComponent;
   @ViewChild('gb') gb: GoatboxComponent;
 
@@ -22,5 +24,10 @@ export class AppComponent implements OnInit {
     this.appForm = this.fb.group({
       goatForm: this.gf.goatForm,
     });
+  }
+
+  searchButtonClicked(event: Event) {
+    console.log(JSON.stringify(event, null, 4));
+    this.searchEvent = event;
   }
 }
