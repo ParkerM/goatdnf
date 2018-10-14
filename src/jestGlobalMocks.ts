@@ -1,6 +1,14 @@
 // @ts-ignore
 global['CSS'] = null;
 
+/**
+ * Some components (mat-slide-toggle, mat-slider, matTooltip) rely on HammerJS for gestures.
+ * In order to get the full feature-set of these components, HammerJS must be loaded into the application.
+ * Fix for: The "longpress" event cannot be bound because Hammer.JS is not loaded and no custom loader has been specified.
+ * https://material.angular.io/guide/getting-started#step-5-gesture-support
+ */
+import 'hammerjs';
+
 const mock = () => {
   let storage = {};
   return {
