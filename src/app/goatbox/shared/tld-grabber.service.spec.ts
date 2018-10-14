@@ -2,6 +2,7 @@ import {async, getTestBed, TestBed} from '@angular/core/testing';
 import {TldDomainExpert, TldGrabberService, TldPair} from './tld-grabber.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {toArray} from 'rxjs/operators';
+import {of} from 'rxjs';
 
 describe('TldGrabberService', () => {
   let injector: TestBed;
@@ -22,7 +23,7 @@ describe('TldGrabberService', () => {
     httpMock.verify();
   });
 
-  it('maps list of TLDs to TldPair domain objects', async(() => {
+  it('fetches TLDs from IANA directory', async(() => {
     const expectedTlds = ['com', 'biz', 'good'];
 
     expect.assertions(3);
@@ -33,9 +34,22 @@ describe('TldGrabberService', () => {
         expect(tlds).toEqual(expectedTlds);
       });
 
-    const req = httpMock.expectOne(TldGrabberService.tldDirectory);
+    const req = httpMock.expectOne('/api/ext/iana/tlds');
     expect(req.request.method).toBe('GET');
     req.flush('COM\nBIZ\n#BAD\nGOOD');
+  }));
+
+  it('creates an expert with a given domain', async(() => {
+    const expectedExpert = new TldDomainExpert(['biz', 'buz'], 'static');
+
+    service.getTlds = jest.fn(() => {
+      return of('biz', 'buz');
+    });
+
+    expect.assertions(1);
+    service.createExpert('static').subscribe(actual => {
+      expect(actual).toEqual(expectedExpert);
+    });
   }));
 });
 
@@ -67,9 +81,9 @@ describe('TldPair', () => {
 
 describe('TldDomainExpert', () => {
   it('initializes TLD array', () => {
-    const tldThing = new TldDomainExpert(['com', 'biz', 'co.uk']);
+    const tldDomainExpert = new TldDomainExpert(['com', 'biz', 'co.uk']);
 
-    expect(tldThing.tldPairs).toEqual([
+    expect(tldDomainExpert.tldPairs).toEqual([
       new TldPair('com', null),
       new TldPair('biz', null),
       new TldPair('co.uk', null),
@@ -77,9 +91,9 @@ describe('TldDomainExpert', () => {
   });
 
   it('initializes TLD array with optional domain arg', () => {
-    const tldThing = new TldDomainExpert(['com', 'biz', 'co.uk'], 'poise');
+    const tldDomainExpert = new TldDomainExpert(['com', 'biz', 'co.uk'], 'poise');
 
-    expect(tldThing.tldPairs).toEqual([
+    expect(tldDomainExpert.tldPairs).toEqual([
       new TldPair('com', 'poise'),
       new TldPair('biz', 'poise'),
       new TldPair('co.uk', 'poise'),
@@ -87,9 +101,9 @@ describe('TldDomainExpert', () => {
   });
 
   it('returns lowercased pairs', () => {
-    const tldThing = new TldDomainExpert(['com', 'BIZ', 'cO.UkFoRAGEr'], 'pOiSe');
+    const tldDomainExpert = new TldDomainExpert(['com', 'BIZ', 'cO.UkFoRAGEr'], 'pOiSe');
 
-    expect(tldThing.tldPairs).toEqual([
+    expect(tldDomainExpert.tldPairs).toEqual([
       new TldPair('com', 'poise'),
       new TldPair('biz', 'poise'),
       new TldPair('co.ukforager', 'poise'),
@@ -97,17 +111,24 @@ describe('TldDomainExpert', () => {
   });
 
   it('updates domain to given value lowercased', () => {
-    const tldThing = new TldDomainExpert(['com', 'biz'], 'oldies');
+    const tldDomainExpert = new TldDomainExpert(['com', 'biz'], 'oldies');
 
-    expect(tldThing.tldPairs).toEqual([
+    expect(tldDomainExpert.tldPairs).toEqual([
       new TldPair('com', 'oldies'),
       new TldPair('biz', 'oldies'),
     ]);
 
-    tldThing.updateDomain('nUwave');
-    expect(tldThing.tldPairs).toEqual([
+    tldDomainExpert.updateDomain('nUwave');
+    expect(tldDomainExpert.tldPairs).toEqual([
       new TldPair('com', 'nuwave'),
       new TldPair('biz', 'nuwave'),
     ]);
+  });
+
+  it('produces collection of formatted FQDNs', () => {
+    const tldDomainExpert = new TldDomainExpert(['con', 'Cat'], 'natuRal');
+    const expectedFqdns = ['natural.con', 'natural.cat'];
+
+    expect(tldDomainExpert.fqdns).toEqual(expectedFqdns);
   });
 });
