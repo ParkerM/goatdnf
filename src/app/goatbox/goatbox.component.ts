@@ -1,8 +1,9 @@
 import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
-import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
+import {TldDomainExpert, TldGrabberService, TldPair} from './shared/tld-grabber.service';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
-import {Observable} from 'rxjs';
+import {Subject} from 'rxjs';
 import {GoatfinderService} from './shared/goatfinder.service';
+import {first} from 'rxjs/operators';
 
 @Component({
   selector: 'app-goatbox',
@@ -11,51 +12,51 @@ import {GoatfinderService} from './shared/goatfinder.service';
 })
 export class GoatboxComponent implements OnInit, AfterViewInit {
 
-  readonly DOMAIN_NAME = 'example'; // TODO: fix me
-  private tlds: TldPair[] = [];
-  private tldSub: Observable<TldPair>;
+  readonly DEFAULT_DOMAIN_NAME = 'example'; // TODO: fix me
+  private expert: TldDomainExpert;
   private _domainName: string;
 
   displayedColumns = ['tld', 'domain'];
   dataSource: MatTableDataSource<TldPair>;
 
-  domainData: any[];
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @Input() domainUpdated: Event;
+  domainUpdated: Subject<string>;
 
   @Input()
   set domainName(name: string) {
     this._domainName = name;
+    this.domainUpdated.next(name);
   }
+
   get domainName() {
     return this._domainName;
   }
 
   constructor(private goatFinderService: GoatfinderService,
               private service: TldGrabberService) {
-    this.tldSub = this.service.getTlds(this.DOMAIN_NAME);
+    this.domainUpdated = new Subject<string>();
+    this.dataSource = new MatTableDataSource<TldPair>();
   }
 
   ngOnInit(): void {
   }
 
-  /**
-   * Set the paginator after the view init since this component will
-   * be able to query its view for the initialized paginator.
-   */
   ngAfterViewInit() {
-    this.tldSub.subscribe(tldPair => this.tlds.push(tldPair),
-      () => {
+    this.service.createExpert(this.DEFAULT_DOMAIN_NAME)
+      .pipe(first())
+      .subscribe(
+        (expert: TldDomainExpert) => this.expert = expert,
+        (err: any) => console.error(err),
+        () => {
+          this.dataSource.data = this.expert.tldPairs;
+          this.dataSource.paginator = this.paginator;
+        }
+      );
 
-      },
-      () => {
-        this.dataSource = new MatTableDataSource<TldPair>(this.tlds);
-        this.dataSource.paginator = this.paginator;
-      }
-    );
-    this.goatFinderService.getWebInfo(['google.com', 'gatech.edu', 'nws.gov', 'junk.blargh'])
-      .subscribe(foo => this.domainData.push(foo));
+    this.domainUpdated.subscribe((domain: string) => {
+      this.expert.updateDomain(domain);
+      this.dataSource.data = this.expert.tldPairs;
+    });
   }
 }

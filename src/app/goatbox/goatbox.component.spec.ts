@@ -3,13 +3,22 @@ import {GoatboxComponent} from './goatbox.component';
 import {MatCardModule, MatPaginatorModule, MatTableModule} from '@angular/material';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {TldGrabberService, TldPair} from './shared/tld-grabber.service';
+import {TldDomainExpert, TldGrabberService} from './shared/tld-grabber.service';
 import {Subject} from 'rxjs';
+import {GoatfinderService} from './shared/goatfinder.service';
 
 describe('GoatboxComponent', () => {
-  describe('simply', () => {
-    it('should get and set the stored domain name', () => {
-      const comp = new GoatboxComponent({getTlds: jest.fn()} as TldGrabberService);
+  describe('should simply', () => {
+    it('get and set the stored domain name', () => {
+      const goatService: GoatfinderService = {
+        getWebInfo: jest.fn(),
+      } as GoatfinderService;
+      const tldService: TldGrabberService = {
+        getTlds: jest.fn(),
+        createExpert: jest.fn(),
+      } as TldGrabberService;
+
+      const comp = new GoatboxComponent(goatService, tldService);
 
       comp.domainName = 'original bonker';
       expect(comp.domainName).toEqual('original bonker');
@@ -19,17 +28,20 @@ describe('GoatboxComponent', () => {
     });
   });
 
-  describe('integrated', () => {
+  describe('when integrated', () => {
     let component: GoatboxComponent;
     let fixture: ComponentFixture<GoatboxComponent>;
 
-    let mockTldSubject: Subject<TldPair>;
+    let mockTldSubject: Subject<string>;
+    let mockExpert: Subject<TldDomainExpert>;
     const mockTldService = {
-      getTlds: jest.fn(() => mockTldSubject)
+      getTlds: jest.fn(() => mockTldSubject),
+      createExpert: jest.fn(() => mockExpert),
     };
 
     beforeEach(async(() => {
-      mockTldSubject = new Subject<TldPair>();
+      mockTldSubject = new Subject<string>();
+      mockExpert = new Subject<TldDomainExpert>();
       TestBed.configureTestingModule({
         imports: [
           NoopAnimationsModule,
@@ -43,51 +55,76 @@ describe('GoatboxComponent', () => {
       }).compileComponents().then(() => {
         fixture = TestBed.createComponent(GoatboxComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
       });
     }));
 
     afterEach(() => mockTldSubject.complete());
 
     it('should display list of domains according to page size', () => {
+      fixture.detectChanges();
       component.paginator.pageSize = 5;
-      const tldResponses = [
-        new TldPair('tld1', 'domain'),
-        new TldPair('tld2', 'domain'),
-        new TldPair('tld3', 'domain'),
-        new TldPair('tld4', 'domain'),
-        new TldPair('tld5', 'domain'),
-        new TldPair('tld6', 'domain'),
-      ];
 
-      tldResponses.forEach(tldPair => mockTldSubject.next(tldPair));
-      mockTldSubject.complete();
+      const tldResponses = ['tld1', 'tld2', 'tld3', 'tld4', 'tld5', 'tld6'];
+      mockExpert.next(new TldDomainExpert(tldResponses, 'test'));
+      mockExpert.complete();
 
       fixture.detectChanges();
 
-      const el = fixture.nativeElement;
-      expect(el.textContent).toContain(tldResponses[0].domain);
-      expect(el.textContent).toContain(tldResponses[1].domain);
-      expect(el.textContent).toContain(tldResponses[2].domain);
-      expect(el.textContent).toContain(tldResponses[3].domain);
-      expect(el.textContent).toContain(tldResponses[4].domain);
-      expect(el.textContent).not.toContain(tldResponses[5].domain);
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).toContain('tld1');
+      expect(el.textContent).toContain('tld2');
+      expect(el.textContent).toContain('tld3');
+      expect(el.textContent).toContain('tld4');
+      expect(el.textContent).toContain('tld5');
+      expect(el.textContent).not.toContain('tld6');
     });
 
-    xit('should update the display according to input domain', () => {
-      const el = fixture.nativeElement;
+    it('emits domainName when set via setter', () => {
+      const domainUpdated = jest.spyOn(component.domainUpdated, 'next');
 
-      component.domainName = 'hello';
-      mockTldSubject.next(new TldPair('com', 'hello'));
+      component.domainName = 'emit me';
+      expect(domainUpdated).toHaveBeenCalledWith('emit me');
+
+      component.domainName = 'pickme!!';
+      expect(domainUpdated).toHaveBeenCalledWith('pickme!!');
+    });
+
+    it('should update the display according to input domain', () => {
       fixture.detectChanges();
+      component.paginator.pageSize = 5;
+      const el: HTMLElement = fixture.nativeElement;
 
+      mockExpert.next(new TldDomainExpert(['com'], 'example'));
+      mockExpert.complete();
+
+      fixture.detectChanges();
+      expect(el.textContent).toContain('example.com');
+
+      component.domainUpdated.next('hello');
+      fixture.detectChanges();
       expect(el.textContent).toContain('hello.com');
 
-      component.domainName = 'goodbye';
-      mockTldSubject.next(new TldPair('com', 'goodbye'));
+      component.domainUpdated.next('goodbye');
+      fixture.detectChanges();
+      expect(el.textContent).toContain('goodbye.com');
+    });
+
+    it('should initialize domain name', () => {
+      const expectedDefault = 'example';
+
+      fixture.detectChanges();
+      component.paginator.pageSize = 5;
+
+      mockExpert.next(new TldDomainExpert(['big', 'biz'], expectedDefault));
+      mockExpert.complete();
+
       fixture.detectChanges();
 
-      expect(el.textContent).toContain('goodbye.com');
+      expect(mockTldService.createExpert).toHaveBeenCalledWith(expectedDefault);
+
+      const el: HTMLElement = fixture.nativeElement;
+      expect(el.textContent).toContain(`${expectedDefault}.big`);
+      expect(el.textContent).toContain(`${expectedDefault}.biz`);
     });
   });
 });
