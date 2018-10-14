@@ -3,8 +3,10 @@ import {AppComponent} from './app.component';
 import {GoatboxComponent} from './goatbox/goatbox.component';
 import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {GoatformComponent} from './goatbox/goatform/goatform.component';
-import {By} from '@angular/platform-browser';
-import {FormBuilder} from '@angular/forms';
+import {BrowserModule, By} from '@angular/platform-browser';
+import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatCardModule, MatTableModule} from '@angular/material';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('AppComponent', () => {
   describe('simply', () => {
@@ -13,7 +15,7 @@ describe('AppComponent', () => {
         declarations: [AppComponent],
         providers: [FormBuilder],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
-      }).compileComponents();
+      }).compileComponents().catch(err => fail(err));
     }));
 
     it('should display GoatBoxComponent and GoatFormComponent', () => {
@@ -34,9 +36,18 @@ describe('AppComponent', () => {
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
+        imports: [
+          BrowserModule,
+          FormsModule,
+          HttpClientTestingModule,
+          MatCardModule,
+          MatTableModule,
+          ReactiveFormsModule,
+        ],
         declarations: [
           AppComponent,
-          GoatformComponent
+          GoatboxComponent,
+          GoatformComponent,
         ],
         providers: [FormBuilder],
         schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -44,16 +55,19 @@ describe('AppComponent', () => {
         fixture = TestBed.createComponent(AppComponent);
         component = fixture.debugElement.componentInstance;
         fixture.detectChanges();
-      });
+      }).catch(err => fail(err));
     }));
 
-    xit('should propagate value changes from GoatForm to GoatBox', () => {
+    it('should pass emitted goatform domains to goatbox', () => {
+      const goatBoxNameSetter = jest.spyOn(component.gb, 'domainName', 'set');
 
-
-      component.appForm.get('goatForm').get('domainInput').setValue('baaaa');
+      component.gf.domainChange.emit('hi');
       fixture.detectChanges();
+      expect(goatBoxNameSetter).toHaveBeenCalledWith('hi');
 
-
+      component.gf.domainChange.emit('hey');
+      fixture.detectChanges();
+      expect(goatBoxNameSetter).toHaveBeenCalledWith('hey');
     });
   });
 });
