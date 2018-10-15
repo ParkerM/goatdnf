@@ -64,6 +64,22 @@ describe('GoatformComponent', () => {
       .toHaveBeenCalledWith('this test took three days to get working and i am not upset about it whatsoever');
   });
 
+  describe('input element', () => {
+    let inputEl: HTMLInputElement;
+
+    beforeEach(() => {
+      inputEl = fixture.nativeElement.querySelector('input');
+    });
+
+    it('disables autocomplete', () => {
+      expect(inputEl.autocomplete).toEqual('off');
+    });
+
+    it('sets placeholder', () => {
+      expect(inputEl.placeholder).toEqual('Domain');
+    });
+  });
+
   function setInputValue(inputEl: HTMLInputElement, value: any) {
     inputEl.value = value;
     inputEl.dispatchEvent(new Event('input'));
