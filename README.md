@@ -2,6 +2,7 @@
 
 [![pipeline status](https://gitlab.com/ParkerM/goatdnf/badges/master/pipeline.svg)](https://gitlab.com/ParkerM/goatdnf/commits/master)
 [![coverage report](https://gitlab.com/ParkerM/goatdnf/badges/master/coverage.svg)](https://parkerm.gitlab.io/goatdnf/coverage)
+[![Known Vulnerabilities](https://snyk.io/test/github/parkerm/goatdnf/badge.svg)](https://snyk.io/test/github/parkerm/goatdnf)
 
 GoatDNF is a tool for fetching and aggregating web domain data based on [IANA's Root Zone Database](https://www.iana.org/domains/root/db).
 
