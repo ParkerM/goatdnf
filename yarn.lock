@@ -4513,9 +4513,10 @@ jest-sonar-reporter@^2.0.0:
   dependencies:
     xml "^1.0.1"
 
-"jest-spec-reporter@file:jest-spec-reporter-1.0.5.tgz":
+jest-spec-reporter@^1.0.5:
   version "1.0.5"
-  resolved "file:jest-spec-reporter-1.0.5.tgz#2c9f8a35a43ee68832b3f82e518247c47311ef6c"
+  resolved "https://registry.yarnpkg.com/jest-spec-reporter/-/jest-spec-reporter-1.0.5.tgz#d864a9d4d7032afa7830890f410f40263536cf37"
+  integrity sha512-B41H7O3yu2I0kLoCXI6kAcJGK5Yg/i/7rVu919zxeKOg26zH3fCixBDw6kwpO+rTI4I1ma9mBG6Pee8uYIiqmw==
   dependencies:
     chalk "2.4.1"
     moment "2.22.2"
