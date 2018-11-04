@@ -12,11 +12,11 @@ describe('GoatboxComponent', () => {
     it('get and set the stored domain name', () => {
       const goatService: GoatfinderService = {
         getWebInfo: jest.fn(),
-      } as GoatfinderService;
+      } as any;
       const tldService: TldGrabberService = {
         getTlds: jest.fn(),
         createExpert: jest.fn(),
-      } as TldGrabberService;
+      } as any;
 
       const comp = new GoatboxComponent(goatService, tldService);
 
@@ -60,7 +60,7 @@ describe('GoatboxComponent', () => {
 
     afterEach(() => mockTldSubject.complete());
 
-    it('should display list of domains according to page size', () => {
+    it('should display list of domains according to page size', async(() => {
       fixture.detectChanges();
       component.paginator.pageSize = 5;
 
@@ -70,14 +70,14 @@ describe('GoatboxComponent', () => {
 
       fixture.detectChanges();
 
-      const el: HTMLElement = fixture.nativeElement;
-      expect(el.textContent).toContain('tld1');
-      expect(el.textContent).toContain('tld2');
-      expect(el.textContent).toContain('tld3');
-      expect(el.textContent).toContain('tld4');
-      expect(el.textContent).toContain('tld5');
-      expect(el.textContent).not.toContain('tld6');
-    });
+      const elContent: HTMLElement = fixture.nativeElement.textContent;
+      expect(elContent).toContain('tld1');
+      expect(elContent).toContain('tld2');
+      expect(elContent).toContain('tld3');
+      expect(elContent).toContain('tld4');
+      expect(elContent).toContain('tld5');
+      expect(elContent).not.toContain('tld6');
+    }));
 
     it('emits domainName when set via setter', () => {
       const domainUpdated = jest.spyOn(component.domainUpdated, 'next');
