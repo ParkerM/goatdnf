@@ -3,6 +3,7 @@ import {async, getTestBed, TestBed} from '@angular/core/testing';
 import {GoatfinderService} from './goatfinder.service';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {toArray} from 'rxjs/operators';
+import {TldDomainExpert} from './tld-grabber.service';
 
 describe('GoatfinderService', () => {
   let injector: TestBed;
@@ -42,5 +43,29 @@ describe('GoatfinderService', () => {
     wizReq.flush('wiz');
     funReq.flush('fun');
     nomReq.flush('nom');
+  }));
+
+  it('queries info on given TLD expert', async(() => {
+    const tldExpert = new TldDomainExpert(['com', 'biz', 'bun'], 'funbrain');
+    const expectedDomains = ['funbrain.com', 'funbrain.biz', 'funbrain.bun'];
+
+    expect(expect.assertions(5));
+    service.getExpertInfo(tldExpert)
+      .pipe(toArray())
+      .subscribe(data => {
+        expect(data.length).toEqual(3);
+        expect(data).toEqual(['com body', 'biz fizz', 'fun on a bun']);
+      });
+
+    const comReq = httpMock.expectOne(expectedDomains[0]);
+    const bizReq = httpMock.expectOne(expectedDomains[1]);
+    const bunReq = httpMock.expectOne(expectedDomains[2]);
+    expect(comReq.request.method).toBe('GET');
+    expect(bizReq.request.method).toBe('GET');
+    expect(bunReq.request.method).toBe('GET');
+
+    bizReq.flush('com body');
+    bunReq.flush('biz fizz');
+    comReq.flush('fun on a bun');
   }));
 });
