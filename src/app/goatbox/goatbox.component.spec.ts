@@ -10,9 +10,7 @@ import {GoatfinderService} from './shared/goatfinder.service';
 describe('GoatboxComponent', () => {
   describe('should simply', () => {
     it('get and set the stored domain name', () => {
-      const goatService: GoatfinderService = {
-        getWebInfo: jest.fn(),
-      } as any;
+      const goatService: GoatfinderService = jest.fn() as any;
       const tldService: TldGrabberService = {
         getTlds: jest.fn(),
         createExpert: jest.fn(),
@@ -34,14 +32,25 @@ describe('GoatboxComponent', () => {
 
     let mockTldSubject: Subject<string>;
     let mockExpert: Subject<TldDomainExpert>;
-    const mockTldService = {
-      getTlds: jest.fn(() => mockTldSubject),
-      createExpert: jest.fn(() => mockExpert),
-    };
+    let mockGoatResponse: Subject<any>;
+
+    let mockTldService: TldGrabberService;
+    let mockGoatService: GoatfinderService;
 
     beforeEach(async(() => {
       mockTldSubject = new Subject<string>();
       mockExpert = new Subject<TldDomainExpert>();
+      mockGoatResponse = new Subject();
+
+      mockTldService = {
+        getTlds: jest.fn(() => mockTldSubject),
+        createExpert: jest.fn(() => mockExpert),
+      } as any;
+
+      mockGoatService = {
+        getExpertInfo: jest.fn(() => mockGoatResponse),
+      } as any;
+
       TestBed.configureTestingModule({
         imports: [
           NoopAnimationsModule,
@@ -51,7 +60,10 @@ describe('GoatboxComponent', () => {
           MatTableModule,
         ],
         declarations: [GoatboxComponent],
-        providers: [{provide: TldGrabberService, useValue: mockTldService}]
+        providers: [
+          {provide: TldGrabberService, useValue: mockTldService},
+          {provide: GoatfinderService, useValue: mockGoatService},
+        ]
       }).compileComponents().then(() => {
         fixture = TestBed.createComponent(GoatboxComponent);
         component = fixture.componentInstance;
@@ -79,7 +91,7 @@ describe('GoatboxComponent', () => {
       expect(elContent).not.toContain('tld6');
     }));
 
-    it('emits domainName when set via setter', () => {
+    it('should emit domainName when set via setter', () => {
       const domainUpdated = jest.spyOn(component.domainUpdated, 'next');
 
       component.domainName = 'emit me';
@@ -89,42 +101,58 @@ describe('GoatboxComponent', () => {
       expect(domainUpdated).toHaveBeenCalledWith('pickme!!');
     });
 
-    it('should update the display according to input domain', () => {
-      fixture.detectChanges();
-      component.paginator.pageSize = 5;
-      const el: HTMLElement = fixture.nativeElement;
-
-      mockExpert.next(new TldDomainExpert(['com'], 'example'));
-      mockExpert.complete();
-
-      fixture.detectChanges();
-      expect(el.textContent).toContain('example.com');
-
-      component.domainUpdated.next('hello');
-      fixture.detectChanges();
-      expect(el.textContent).toContain('hello.com');
-
-      component.domainUpdated.next('goodbye');
-      fixture.detectChanges();
-      expect(el.textContent).toContain('goodbye.com');
-    });
-
-    it('should initialize domain name', () => {
+    it('should initialize domain name and fetch data', () => {
       const expectedDefault = 'example';
+      const defaultExpert = new TldDomainExpert(['big', 'biz'], expectedDefault);
 
       fixture.detectChanges();
-      component.paginator.pageSize = 5;
 
-      mockExpert.next(new TldDomainExpert(['big', 'biz'], expectedDefault));
+      component.paginator.pageSize = 5;
+      mockExpert.next(defaultExpert);
       mockExpert.complete();
 
       fixture.detectChanges();
 
       expect(mockTldService.createExpert).toHaveBeenCalledWith(expectedDefault);
+      expect(mockGoatService.getExpertInfo).toHaveBeenCalledWith(defaultExpert);
 
       const el: HTMLElement = fixture.nativeElement;
       expect(el.textContent).toContain(`${expectedDefault}.big`);
       expect(el.textContent).toContain(`${expectedDefault}.biz`);
+    });
+
+    describe('on domain name update', () => {
+      let tlds: string[];
+      let el: HTMLElement;
+
+      beforeEach(() => {
+        fixture.detectChanges();
+        component.paginator.pageSize = 5;
+
+        tlds = ['com', 'biz'];
+        el = fixture.nativeElement;
+
+        mockExpert.next(new TldDomainExpert(tlds, 'example'));
+        mockExpert.complete();
+      });
+
+      it('should update the display according to input domain', () => {
+        component.domainUpdated.next('hello');
+        fixture.detectChanges();
+        expect(el.textContent).toContain('hello.com');
+
+        component.domainUpdated.next('goodbye');
+        fixture.detectChanges();
+        expect(el.textContent).toContain('goodbye.com');
+      });
+
+      it('should query service on domain update', () => {
+        component.domainUpdated.next('goats');
+        expect(mockGoatService.getExpertInfo).toHaveBeenCalledWith(new TldDomainExpert(tlds, 'goats'));
+
+        component.domainUpdated.next('boats');
+        expect(mockGoatService.getExpertInfo).toHaveBeenCalledWith(new TldDomainExpert(tlds, 'boats'));
+      });
     });
   });
 });

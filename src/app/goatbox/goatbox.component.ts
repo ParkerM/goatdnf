@@ -51,11 +51,13 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
         () => {
           this.dataSource.data = this.expert.tldPairs;
           this.dataSource.paginator = this.paginator;
+          this.domainUpdated.next(this.expert.domain);
         }
       );
 
     this.domainUpdated.subscribe((domain: string) => {
       this.expert.updateDomain(domain);
+      this.goatFinderService.getExpertInfo(this.expert);
       this.dataSource.data = this.expert.tldPairs;
     });
   }
