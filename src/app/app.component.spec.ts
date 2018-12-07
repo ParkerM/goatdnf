@@ -14,7 +14,7 @@ describe('AppComponent', () => {
       TestBed.configureTestingModule({
         declarations: [AppComponent],
         providers: [FormBuilder],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        schemas: [CUSTOM_ELEMENTS_SCHEMA],
       }).compileComponents().catch(err => fail(err));
     }));
 
@@ -23,8 +23,8 @@ describe('AppComponent', () => {
       const component = fixture.debugElement.componentInstance;
       expect(component).toBeTruthy();
 
-      const gb = fixture.debugElement.query(By.css('app-goatbox')) as GoatboxComponent;
-      const gf = fixture.debugElement.query(By.css('app-goatform')) as GoatformComponent;
+      const gb = fixture.debugElement.query(By.css('app-goatbox')) as unknown as GoatboxComponent;
+      const gf = fixture.debugElement.query(By.css('app-goatform')) as unknown as GoatformComponent;
       expect(gb).toBeTruthy();
       expect(gf).toBeTruthy();
     });
@@ -50,7 +50,7 @@ describe('AppComponent', () => {
           GoatformComponent,
         ],
         providers: [FormBuilder],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        schemas: [CUSTOM_ELEMENTS_SCHEMA],
       }).compileComponents().then(() => {
         fixture = TestBed.createComponent(AppComponent);
         component = fixture.debugElement.componentInstance;
