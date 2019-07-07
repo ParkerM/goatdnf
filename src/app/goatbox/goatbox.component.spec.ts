@@ -1,6 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {GoatboxComponent} from './goatbox.component';
-import {MatCardModule, MatPaginatorModule, MatTableModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableModule} from '@angular/material/table';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {TldDomainExpert, TldGrabberService} from './shared/tld-grabber.service';

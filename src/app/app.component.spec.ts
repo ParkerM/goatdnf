@@ -5,7 +5,8 @@ import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {GoatformComponent} from './goatbox/goatform/goatform.component';
 import {BrowserModule, By} from '@angular/platform-browser';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatCardModule, MatTableModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
+import {MatTableModule} from '@angular/material/table';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
 
 describe('AppComponent', () => {

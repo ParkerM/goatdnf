@@ -5,7 +5,8 @@ import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {GoatboxModule} from './goatbox/goatbox.module';
-import {MatCardModule, MatToolbarModule} from '@angular/material';
+import {MatCardModule} from '@angular/material/card';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @NgModule({
   imports: [
@@ -19,6 +20,8 @@ import {MatCardModule, MatToolbarModule} from '@angular/material';
   declarations: [
     AppComponent,
   ],
+  providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
