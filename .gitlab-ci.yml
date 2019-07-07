@@ -20,6 +20,7 @@ build:
     paths:
     - app.yaml
     - manifest.yml
+    - Procfile
     - dist/
     when: on_success
   only:
