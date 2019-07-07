@@ -1,14 +1,35 @@
-image: node:11
+image: node:12
 
 stages:
-- test
 - build
+- test
 - deploy
+
+build:
+  stage: build
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull-push
+    paths:
+    - node_modules/
+  script:
+  - yarn install
+  - yarn build:prod
+  - cd dist && yarn install
+  artifacts:
+    paths:
+    - app.yaml
+    - manifest.yml
+    - dist/
+    when: on_success
+  only:
+  - master
 
 jest_test:
   stage: test
   cache:
     key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
     paths:
     - node_modules/
   script:
@@ -25,9 +46,9 @@ vulerability_scan:
   stage: test
   cache:
     key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
     paths:
     - node_modules/
-    policy: pull
   script:
   - yarn install
   - yarn test:vulnerabilities
@@ -35,23 +56,18 @@ vulerability_scan:
   - master
   allow_failure: true
 
-build:
-  stage: build
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-    - node_modules/
-    policy: pull
+deploy_heroku:
+  stage: deploy
+  dependencies:
+  - build
   script:
-  - yarn install
-  - yarn build:prod
-  - cd dist && yarn install
-  artifacts:
-    paths:
-    - app.yaml
-    - manifest.yml
-    - dist/
-    when: on_success
+  - mv Procfile -t dist/
+  - git add dist/Procfile -f
+  - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/goatdnf.git
+  - git commit -m "Heroku deploy ${CI_COMMIT_SHORT_SHA}"
+  - git subtree push --prefix dist heroku master
+  environment:
+    name: HEROKU_PROD
   only:
   - master
 
@@ -71,7 +87,7 @@ build:
   only:
   - master
 
-deploy_pws:
+.deploy_pws:
   stage: deploy
   dependencies:
   - build
