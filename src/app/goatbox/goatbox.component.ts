@@ -19,7 +19,7 @@ export class GoatboxComponent implements OnInit, AfterViewInit {
   displayedColumns = ['tld', 'domain'];
   dataSource: MatTableDataSource<TldPair>;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   domainUpdated: Subject<string>;
 

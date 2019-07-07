@@ -14,8 +14,8 @@ export class AppComponent implements OnInit {
 
   searchText: string;
 
-  @ViewChild('gf') gf: GoatformComponent;
-  @ViewChild('gb') gb: GoatboxComponent;
+  @ViewChild('gf', { static: true }) gf: GoatformComponent;
+  @ViewChild('gb', { static: true }) gb: GoatboxComponent;
 
   constructor(private fb: FormBuilder) {
   }

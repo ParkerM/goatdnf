@@ -3,7 +3,6 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": "../out-tsc/spec",
-    "module": "commonjs",
     "types": [
       "jest",
       "jsdom",
