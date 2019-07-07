@@ -69,7 +69,7 @@ deploy_heroku:
   - git add dist/Procfile -f
   - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/goatdnf.git
   - git commit -m "Heroku deploy ${CI_COMMIT_SHORT_SHA}"
-  - git subtree push --prefix dist heroku master
+  - git push heroku `git subtree split --prefix dist master`:master --force
   environment:
     name: HEROKU_PROD
   only:
