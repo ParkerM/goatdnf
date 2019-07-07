@@ -61,6 +61,9 @@ deploy_heroku:
   stage: deploy
   dependencies:
   - build
+  before_script:
+  - git config --global user.name "${GITLAB_USER_NAME}"
+  - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
   - mv Procfile -t dist/
   - git add dist/Procfile -f
