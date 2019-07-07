@@ -6,12 +6,12 @@
   "homepage": "https://gitlab.com/ParkerM/goatdnf",
   "repository": "gitlab:ParkerM/goatdnf",
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "http-proxy-middleware": "^0.19.1",
     "express-serve-static-core": "^0.1.1"
   },
   "engines": {
-    "node": ">=10.12.0 <12.0.0",
-    "yarn": "^1.12.3"
+    "node": "10.x || 12.x",
+    "yarn": "1.x"
   }
 }
