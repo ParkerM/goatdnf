@@ -1,8 +1,8 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": "../out-tsc/spec",
+    "outDir": "./out-tsc/spec",
     "types": [
       "jest",
       "jsdom",
@@ -10,7 +10,7 @@
     ]
   },
   "files": [
-    "polyfills.ts"
+    "src/polyfills.ts"
   ],
   "include": [
     "**/*.spec.ts",
